@@ -6,16 +6,10 @@ public typealias OSLogMessage = String
 
 public struct Logger : @unchecked Sendable {
     public let subsystem: String
-    public let category: String
-
-    /// Creates a logger for logging to the default subsystem.
-    public init() {
-        self.subsystem = ""
-        self.category = ""
-    }
+    public let category: String?
 
     /// Creates a custom logger for logging to a specific subsystem and category.
-    public init(subsystem: String, category: String) {
+    public init(subsystem: String = "", category: String? = nil) {
         self.subsystem = subsystem
         self.category = category
     }
@@ -70,7 +64,9 @@ public struct Logger : @unchecked Sendable {
     }
 
     private var logTag: String {
-        subsystem.isEmpty && category.isEmpty ? "" : (subsystem + "/" + category)
+        var logTag = subsystem
+        if let category { logTag += "/" + category }
+        return logTag
     }
 
     private func androidLog(priority: android_LogPriority, message: OSLogMessage) {
